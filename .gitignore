@@ -2,3 +2,10 @@
 *.VC.db
 *.VC.opendb
 *.ipch
+*.log
+*.obj
+*.pdb
+*.ilk
+*.tlog
+*.idb
+*.lastbuildstate
