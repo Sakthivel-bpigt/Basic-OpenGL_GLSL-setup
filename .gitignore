@@ -1,3 +1,4 @@
 *.suo
 *.VC.db
 *.VC.opendb
+*.ipch
