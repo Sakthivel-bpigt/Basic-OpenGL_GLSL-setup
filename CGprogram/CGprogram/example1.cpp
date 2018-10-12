@@ -6,54 +6,56 @@
 const int NumPoints = 100;
 
 //----------------------------------------------------------------------------
+//*********************************
+const int nLength = 1000;
+const int nPoints = nLength * nLength;
+vec2 pointsArr[nPoints];
 
-void
-init( void )
+//----------------------------------------------------------------------------
+void makePointsArray(vec2 BL, vec2 TR)
 {
-    
-	vec2 points[NumPoints];
+	vec2 point = BL;
+	float offset = 2.0 / nLength;
+	for (size_t i = 0; i < nLength; i++)
+	{
+		point.y = BL.y + i * offset;
+		for (size_t j = 0; j < nLength; j++)
+		{
+			point.x = BL.x + j * offset;
+			pointsArr[i*nLength + j] = point;
+		}
 
-    // Specifiy the vertices for a triangle
-    vec2 vertices[3] = {
-        vec2( -1.0, -1.0 ), vec2( 0.0, 1.0 ), vec2( 1.0, -1.0 )
-    };
-
-    // Select an arbitrary initial point inside of the triangle
-    points[0] = vec2( 0.25, 0.50 );
-
-    // compute and store N-1 new points
-    for ( int i = 1; i < NumPoints; ++i ) {
-        int j = rand() % 3;   // pick a vertex at random
-
-        // Compute the point halfway between the selected vertex
-        //   and the previous point
-        points[i] = ( points[i - 1] + vertices[j] ) / 2.0;
-    }
-	   
-    // Create a vertex array object
-    GLuint vao;
-    glGenVertexArrays( 1, &vao );
-    glBindVertexArray( vao );
-
-    // Create and initialize a buffer object
-    GLuint buffer;
-    glGenBuffers( 1, &buffer );
-    glBindBuffer( GL_ARRAY_BUFFER, buffer );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW );
-
-    // Load shaders and use the resulting shader program
-	//GLuint program = InitShader("vshader21.glsl", "fshader21.glsl");
-	GLuint program = InitShader( "vshader21.glsl", "fshader21.glsl" );
-    glUseProgram( program );
-
-    // Initialize the vertex position attribute from the vertex shader
-    GLuint loc = glGetAttribLocation( program, "vPosition" );
-    glEnableVertexAttribArray( loc );
-    glVertexAttribPointer( loc, 2, GL_FLOAT, GL_FALSE, 0,
-                           BUFFER_OFFSET(0) );
-
-    glClearColor( 1.0, 1.0, 1.0, 1.0 ); // white background
+	}
 }
+
+
+void init1(void)
+{
+	makePointsArray(vec2(-1, -1), vec2(1, 1));
+	// Create a vertex array object
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	// Create and initialize a buffer object
+	GLuint buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pointsArr), pointsArr, GL_STATIC_DRAW);
+
+	// Load shaders and use the resulting shader program
+	//GLuint program = InitShader("vshader21.glsl", "fshader21.glsl");
+	GLuint program = InitShader("vshader21.glsl", "fshader21.glsl");
+	glUseProgram(program);
+
+	// Initialize the vertex position attribute from the vertex shader
+	GLuint loc = glGetAttribLocation(program, "vPosition");
+	glEnableVertexAttribArray(loc);
+	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+	glClearColor(1.0, 1.0, 1.0, 1.0); // white background
+}
+
 
 //----------------------------------------------------------------------------
 
@@ -62,7 +64,7 @@ display( void )
 {
     glClear( GL_COLOR_BUFFER_BIT );     // clear the window
 	glPointSize(10.0);
-    glDrawArrays( GL_POINTS, 0, NumPoints );    // draw the points
+    glDrawArrays( GL_POINTS, 0, nPoints);    // draw the points
     glFlush();
 }
 
@@ -91,7 +93,7 @@ main( int argc, char **argv )
 
 	glewInit();
     
-    init();
+    init1();
 
     glutDisplayFunc( display );
     glutKeyboardFunc( keyboard );
