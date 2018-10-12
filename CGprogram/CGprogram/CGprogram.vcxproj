@@ -115,6 +115,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="example1.cpp" />
+    <ClCompile Include="InitShader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fshader21.glsl" />
+    <None Include="vshader21.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Angel.h" />
+    <ClInclude Include="CheckError.h" />
+    <ClInclude Include="mat.h" />
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="vec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
