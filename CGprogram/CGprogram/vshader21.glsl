@@ -3,18 +3,34 @@
 in vec4 vPosition;
 out vec4 vColor;
 
+uniform vec4 Cplane;
+
 float max_itr = 200;
 float cal_man(float maxItr ) {
 	float count = 0;
-	vec2 z;
+	vec2 z = vec2(0.0,0.0);
+	
+	//vec2 C_origin = vec2(-2.5,-1.75);
+	vec2 C_origin = Cplane.xy;
+	// so mandelbrot length is 3.5 in complex plane
+	// our vertices range from (-1, -1) to (1,1)
+	// in case if we have 1000 vertices each vertex is 0.002 unit apart from each other
+	// so we have to scale the complex plane into our geometric plane 
+	float offset = (Cplane.z - Cplane.x) * 0.5; // by the above mentioned scale we calculated this offset
+	// reset vertices from origin
+	vec2 newVPos = vec2(vPosition.x+1, vPosition.y+1);
+	// Scale vertex to complex plane by multiplying offset
+	newVPos *= offset;
+	// Scale vertex to complex plane by changing origin
+	newVPos += C_origin;
 	float len2, temp;
-	z.x = z.y = 0.0;
+	//z.x = z.y = 0.0;
 	do {
 			/* rl part */
-			temp = z.x*z.x - z.y*z.y - 0.5 + vPosition.x*1.50;
+			temp = z.x*z.x - z.y*z.y + newVPos.x;
 
 			/* iginary part */
-			z.y = 2.0*z.x*z.y + vPosition.y*1.50;
+			z.y = 2.0*z.x*z.y + newVPos.y;
 			
 			z.x = temp;
 			

@@ -11,6 +11,10 @@ const int nLength = 1000;
 const int nPoints = nLength * nLength;
 vec2 pointsArr[nPoints];
 
+// mandelbrot ranges from (-2.5, -1.75) to (1, 1.75) in complex plane for our program
+GLfloat C_Plane[4] = { -2.5, -1.75, 1, 1.75 };
+GLuint cplane; // The location of the "cplane" shader uniform variable
+
 //----------------------------------------------------------------------------
 void makePointsArray(vec2 BL, vec2 TR)
 {
@@ -53,6 +57,8 @@ void init1(void)
 	glEnableVertexAttribArray(loc);
 	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
+	cplane = glGetUniformLocation(program, "Cplane");
+	glUniform4fv(cplane, 1, C_Plane);
 	glClearColor(1.0, 1.0, 1.0, 1.0); // white background
 }
 
