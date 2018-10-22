@@ -87,7 +87,7 @@ main( int argc, char **argv )
 {    
 	glutInit(&argc, argv);
     glutInitDisplayMode( GLUT_RGBA );
-    glutInitWindowSize( 512, 512 );
+    glutInitWindowSize( 1000, 1000 );
 	    
     glutCreateWindow( "Sierpinski Gasket" );
 
