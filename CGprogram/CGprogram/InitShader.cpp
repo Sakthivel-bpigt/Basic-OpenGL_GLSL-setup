@@ -3,96 +3,138 @@
 
 namespace Angel {
 
-// Create a NULL-terminated string by reading the provided file
-static char*
-readShaderSource(const char* shaderFile)
-{
-    FILE* fp = fopen(shaderFile, "r");
+	unsigned long getFileLength(std::ifstream& file)
+	{
+		if (!file.good()) return 0;
 
-    if ( fp == NULL ) { return NULL; }
+		unsigned long pos = file.tellg();
+		file.seekg(0, std::ios::end);
+		unsigned long len = file.tellg();
+		file.seekg(std::ios::beg);
 
-    fseek(fp, 0L, SEEK_END);
-    long size = ftell(fp);
-
-    fseek(fp, 0L, SEEK_SET);
-    char* buf = new char[size + 1];
-    fread(buf, 1, size, fp);
-
-    buf[size] = '\0';
-    fclose(fp);
-
-    return buf;
-}
-
-// Create a GLSL program object from vertex and fragment shader files
-GLuint
-InitShader(const char* vShaderFile, const char* fShaderFile)
-{
-    struct Shader {
-	const char*  filename;
-	GLenum       type;
-	GLchar*      source;
-    }  shaders[2] = {
-	{ vShaderFile, GL_VERTEX_SHADER, NULL },
-	{ fShaderFile, GL_FRAGMENT_SHADER, NULL }
-    };
-
-    GLuint program = glCreateProgram();
-    
-	
-    for ( int i = 0; i < 2; ++i ) {
-	Shader& s = shaders[i];
-	s.source = readShaderSource( s.filename );
-	if ( shaders[i].source == NULL ) {
-	    std::cerr << "Failed to read " << s.filename << std::endl;
-	    exit( EXIT_FAILURE );
+		return len;
 	}
 
-	GLuint shader = glCreateShader( s.type );
+	static char* readShaderSource1(const char* filename)
+	{
+		std::ifstream myfile;
+		myfile.open(filename, std::ios::in);
+		if (!myfile) return NULL;
 
-	glShaderSource( shader, 1, (const GLchar**) &s.source, NULL );
-	glCompileShader( shader );
+		unsigned long len = getFileLength(myfile);
 
-	GLint  compiled;
-	glGetShaderiv( shader, GL_COMPILE_STATUS, &compiled );
-	if ( !compiled ) {
-	    std::cerr << s.filename << " failed to compile:" << std::endl;
-	    GLint  logSize;
-	    glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &logSize );
-	    char* logMsg = new char[logSize];
-	    glGetShaderInfoLog( shader, logSize, NULL, logMsg );
-	    std::cerr << logMsg << std::endl;
-	    delete [] logMsg;
+		if (len == 0) return NULL;   // "Empty File" 
 
-	    exit( EXIT_FAILURE );
+		char* ShaderSource = new char[len + 1];
+		if (ShaderSource == 0) return NULL;   // can't reserve memory
+
+		ShaderSource[len] = 0;  // len isn't always strlen cause some characters are stripped in ascii read...
+								// it is important to 0-terminate the real length later, len is just max possible value...
+		unsigned int i = 0;
+		while (myfile.good())
+		{
+			ShaderSource[i] = myfile.get();       // get character from file.
+			if (!myfile.eof())
+				i++;
+		}
+
+		ShaderSource[i] = 0;  // 0 terminate it.
+
+		myfile.close();
+
+		return ShaderSource;
 	}
 
-	delete [] s.source;
+	// Create a NULL-terminated string by reading the provided file
+	static char* readShaderSource(const char* shaderFile)
+	{
+		FILE* fp = fopen(shaderFile, "r");
 
-	glAttachShader( program, shader );
-    }
+		if (fp == NULL) { return NULL; }
 
-    /* link  and error check */
-    glLinkProgram(program);
+		fseek(fp, 0L, SEEK_END);
+		long size = ftell(fp);
 
-    GLint  linked;
-    glGetProgramiv( program, GL_LINK_STATUS, &linked );
-    if ( !linked ) {
-	std::cerr << "Shader program failed to link" << std::endl;
-	GLint  logSize;
-	glGetProgramiv( program, GL_INFO_LOG_LENGTH, &logSize);
-	char* logMsg = new char[logSize];
-	glGetProgramInfoLog( program, logSize, NULL, logMsg );
-	std::cerr << logMsg << std::endl;
-	delete [] logMsg;
+		fseek(fp, 0L, SEEK_SET);
+		char* buf = new char[size + 1];
+		fread(buf, 1, size, fp);
 
-	exit( EXIT_FAILURE );
-    }
+		buf[size] = '\0';
+		fclose(fp);
 
-    /* use program object */
-    glUseProgram(program);
+		return buf;
+	}
 
-    return program;
-}
+	// Create a GLSL program object from vertex and fragment shader files
+	GLuint
+		InitShader(const char* vShaderFile, const char* fShaderFile)
+	{
+		struct Shader {
+			const char*  filename;
+			GLenum       type;
+			GLchar*      source;
+		}  shaders[2] = {
+		{ vShaderFile, GL_VERTEX_SHADER, NULL },
+		{ fShaderFile, GL_FRAGMENT_SHADER, NULL }
+		};
+
+		GLuint program = glCreateProgram();
+
+
+		for (int i = 0; i < 2; ++i) {
+			Shader& s = shaders[i];
+			s.source = readShaderSource1(s.filename);
+			//s.source = readShaderSource( s.filename );
+			if (shaders[i].source == NULL) {
+				std::cerr << "Failed to read " << s.filename << std::endl;
+				exit(EXIT_FAILURE);
+			}
+			std::cerr << s.source << std::endl;
+
+			GLuint shader = glCreateShader(s.type);
+
+			glShaderSource(shader, 1, (const GLchar**)&s.source, NULL);
+			glCompileShader(shader);
+
+			GLint  compiled;
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+			if (!compiled) {
+				std::cerr << s.filename << " failed to compile:" << std::endl;
+				GLint  logSize;
+				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+				char* logMsg = new char[logSize];
+				glGetShaderInfoLog(shader, logSize, NULL, logMsg);
+				std::cerr << logMsg << std::endl;
+				delete[] logMsg;
+				exit(EXIT_FAILURE);
+			}
+
+			delete[] s.source;
+
+			glAttachShader(program, shader);
+		}
+
+		/* link  and error check */
+		glLinkProgram(program);
+
+		GLint  linked;
+		glGetProgramiv(program, GL_LINK_STATUS, &linked);
+		if (!linked) {
+			std::cerr << "Shader program failed to link" << std::endl;
+			GLint  logSize;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logSize);
+			char* logMsg = new char[logSize];
+			glGetProgramInfoLog(program, logSize, NULL, logMsg);
+			std::cerr << logMsg << std::endl;
+			delete[] logMsg;
+
+			exit(EXIT_FAILURE);
+		}
+
+		/* use program object */
+		glUseProgram(program);
+
+		return program;
+	}
 
 }  // Close namespace Angel block
