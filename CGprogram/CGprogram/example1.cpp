@@ -12,9 +12,12 @@ const int nPoints = nLength * nLength;
 vec2 pointsArr[nPoints];
 
 // mandelbrot ranges from (-2.5, -1.75) to (1, 1.75) in complex plane for our program
-GLfloat C_Plane[4] = { -2.5, -1.75, 1, 1.75 };
+vec4 C_Plane_P = { -2.5, -1.75, 1, 1.75 };
+vec4 C_Plane = C_Plane_P;
+vec4 C_Plane_New;
+vec4 mousePos;
 GLuint cplane; // The location of the "cplane" shader uniform variable
-
+bool leftMouseButtonDown = false;
 //----------------------------------------------------------------------------
 void makePointsArray(vec2 BL, vec2 TR)
 {
@@ -58,7 +61,7 @@ void init1(void)
 	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 	cplane = glGetUniformLocation(program, "Cplane");
-	glUniform4fv(cplane, 1, C_Plane);
+	
 	glClearColor(1.0, 1.0, 1.0, 1.0); // white background
 }
 
@@ -69,6 +72,15 @@ void
 display( void )
 {
     glClear( GL_COLOR_BUFFER_BIT );     // clear the window
+
+	glBegin(GL_LINE_LOOP);
+	glVertex2f(mousePos.x, mousePos.y);
+	glVertex2f(mousePos.z, mousePos.y);
+	glVertex2f(mousePos.z, mousePos.w);
+	glVertex2f(mousePos.x, mousePos.w);
+	glEnd();
+
+	glUniform4fv(cplane, 1, C_Plane);
 	glPointSize(10.0);
     glDrawArrays( GL_POINTS, 0, nPoints);    // draw the points
     glFlush();
@@ -83,10 +95,98 @@ keyboard( unsigned char key, int x, int y )
     case 033:
         exit( EXIT_SUCCESS );
         break;
+	case 'r':
+		C_Plane = C_Plane_P;
+		break;
     }
 }
 
 //----------------------------------------------------------------------------
+
+void updateComplexPlane(float x, float y )
+{
+	float C_length = abs(C_Plane[2] - C_Plane[0]);
+	float offset = C_length / nLength;
+	std::cout << "C_length: " << C_length << ", offset: " << offset << std::endl;
+	vec2 C_point = vec2(C_Plane[0] + (nLength-x) * offset, C_Plane[1] + y * offset);
+	std::cout << "X, Y " << C_point << std::endl;
+	float C_Plane_Offset = offset * nLength * 0.25;
+	std::cout << "C_Plane_Offset : " << C_Plane_Offset << std::endl;
+	C_Plane[0] = C_point.x - C_Plane_Offset;
+	C_Plane[1] = C_point.y - C_Plane_Offset;
+	C_Plane[2] = C_point.x + C_Plane_Offset;
+	C_Plane[3] = C_point.y + C_Plane_Offset;
+	std::cout << "C_Plane_LB (" << C_Plane[0] << ", " << C_Plane[1] << ") ";
+	std::cout << " C_Plane_TR (" << C_Plane[2] <<", "<< C_Plane[3] << ")\n " << std::endl;
+}
+
+//----------------------------------------------------------------------------
+
+void
+mouse(int button, int state, int x, int y)
+{
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+		//update the complex plane
+		//std::cout << "X: " << x<< " Y: " << y<< std::endl;
+		updateComplexPlane(x, y);
+		//leftMouseButtonDown = true;
+		//float C_length = abs(C_Plane[2] - C_Plane[0]);
+		//float offset = C_length / nLength;
+		//std::cout << "C_length: " << C_length << ", offset: " << offset << std::endl;
+
+		//vec2 C_point = vec2(C_Plane[0] + x * offset, C_Plane[1] + y * offset);
+		//C_Plane_New = vec4(C_point.x, C_point.y, C_point.x, C_point.y);
+
+		//std::cout << "C_Plane_LB (" << C_Plane_New[0] << ", " << C_Plane_New[1] << ") ";
+		////std::cout << " C_Plane_TR (" << C_Plane_New[2] << ", " << C_Plane_New[3] << ") " << std::endl;
+
+		//mousePos = vec4(x/ (float)nLength, y / (float)nLength, x / (float)nLength, y / (float)nLength);
+	}
+	//if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+	//	leftMouseButtonDown = false;
+	//	C_Plane = C_Plane_New;
+
+	//	//std::cout << "C_Plane_LB (" << C_Plane_New[0] << ", " << C_Plane_New[1] << ") ";
+	//	std::cout << " C_Plane_TR (" << C_Plane_New[2] << ", " << C_Plane_New[3] << ")\n " << std::endl;
+
+	//}
+}
+
+//----------------------------------------------------------------------
+
+void mouseMotion(int x, int y)
+{
+	if (leftMouseButtonDown)
+	{
+		float C_length = abs(C_Plane[2] - C_Plane[0]);
+		float offset = C_length / nLength;
+		vec2 C_point = vec2(C_Plane[0] + x * offset, C_Plane[1] + y * offset);
+		C_Plane_New.z = C_point.x;
+		C_Plane_New.w = C_point.y;
+		mousePos.z = x / (float)nLength;
+		mousePos.w = y / (float)nLength;
+	}
+}
+
+//----------------------------------------------------------------------
+
+void passiveMouseMotion(int x, int y)
+{
+	//std::cout << "X: " << x << "Y: " << y << std::endl;
+	//float C_length = abs(C_Plane[2] - C_Plane[0]);
+	//float offset = C_length / nLength;
+	//std::cout << "C_length: " << C_length << ", offset: " << offset << std::endl;
+	//vec2 C_point = vec2(C_Plane[0] + x * offset, C_Plane[1] + y * offset);
+	//std::cout << "X, Y " << C_point << std::endl;
+	//float C_Plane_Offset = offset * nLength * 0.25;
+	//std::cout << "C_Plane_Offset : " << C_Plane_Offset << std::endl;
+	//vec4 C_Plane_tmp = { C_point.x - C_Plane_Offset, C_point.y - C_Plane_Offset,
+	//					C_point.x + C_Plane_Offset, C_point.y + C_Plane_Offset };
+	//std::cout << "C_Plane_LB (" << C_Plane_tmp[0] << ", " << C_Plane_tmp[1] << ") ";
+	//std::cout << " C_Plane_TR (" << C_Plane_tmp[2] << ", " << C_Plane_tmp[3] << ") " << std::endl;
+}
+
+//----------------------------------------------------------------------
 
 int
 main( int argc, char **argv )
@@ -103,6 +203,9 @@ main( int argc, char **argv )
 
     glutDisplayFunc( display );
     glutKeyboardFunc( keyboard );
+	glutMouseFunc(mouse);
+	glutMotionFunc(mouseMotion);
+	glutPassiveMotionFunc(passiveMouseMotion);
 
     glutMainLoop();
     return 0;
