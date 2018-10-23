@@ -89,7 +89,7 @@ InitShader(const char* vShaderFile, const char* fShaderFile)
 	    std::cerr << "Failed to read " << s.filename << std::endl;
 	    exit( EXIT_FAILURE );
 	}
-	std::cerr << s.source << std::endl;
+	//std::cerr << s.source << std::endl;
 
 	GLuint shader = glCreateShader( s.type );
 
