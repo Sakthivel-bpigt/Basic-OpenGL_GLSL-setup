@@ -16,7 +16,9 @@ vec4 C_Plane_P = { -2.5, -1.75, 1, 1.75 };
 vec4 C_Plane = C_Plane_P;
 vec4 C_Plane_New;
 vec4 mousePos;
+float max_itr = 100;
 GLuint cplane; // The location of the "cplane" shader uniform variable
+GLuint maxitr; // The location of the "max_itr" shader uniform variable
 bool leftMouseButtonDown = false;
 //----------------------------------------------------------------------------
 void makePointsArray(vec2 BL, vec2 TR)
@@ -61,6 +63,7 @@ void init1(void)
 	glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
 	cplane = glGetUniformLocation(program, "Cplane");
+	maxitr = glGetUniformLocation(program, "max_itr");
 	
 	glClearColor(1.0, 1.0, 1.0, 1.0); // white background
 }
@@ -81,6 +84,7 @@ display( void )
 	glEnd();
 
 	glUniform4fv(cplane, 1, C_Plane);
+	glUniform1f(maxitr, max_itr);
 	glPointSize(10.0);
     glDrawArrays( GL_POINTS, 0, nPoints);    // draw the points
     glFlush();
@@ -98,7 +102,12 @@ keyboard( unsigned char key, int x, int y )
 	case 'r':
 		C_Plane = C_Plane_P;
 		break;
+	case 'q':
+		max_itr++;
+		std::cout << "max_itr: " << max_itr << std::endl;
+		break;
     }
+	glutPostRedisplay();
 }
 
 //----------------------------------------------------------------------------
@@ -152,13 +161,9 @@ mouse(int button, int state, int x, int y)
 
 		//mousePos = vec4(x/ (float)nLength, y / (float)nLength, x / (float)nLength, y / (float)nLength);
 	}
-	//if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-	//	leftMouseButtonDown = false;
-	//	C_Plane = C_Plane_New;
-
-	//	//std::cout << "C_Plane_LB (" << C_Plane_New[0] << ", " << C_Plane_New[1] << ") ";
-	//	std::cout << " C_Plane_TR (" << C_Plane_New[2] << ", " << C_Plane_New[3] << ")\n " << std::endl;
-
+	//if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+	//	max_itr++;
+	//	std::cout << "max_itr: " << max_itr << std::endl;
 	//}
 }
 
@@ -212,6 +217,11 @@ void passiveMouseMotion(int x, int y)
 	//std::cout << " C_Plane_TR (" << C_Plane_tmp[2] << ", " << C_Plane_tmp[3] << ") " << std::endl;
 }
 
+//----------------------------------------------------------------------
+void idle()
+{
+	glutPostRedisplay();
+}
 //----------------------------------------------------------------------
 
 int

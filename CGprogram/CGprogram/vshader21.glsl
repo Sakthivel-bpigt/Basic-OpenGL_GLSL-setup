@@ -1,11 +1,11 @@
 #version 150
-
+#define DEBUG 0
 in vec4 vPosition;
 out vec4 vColor;
 
 uniform vec4 Cplane;
+uniform float max_itr;
 
-float max_itr = 200;
 float cal_man(float maxItr ) {
 	float count = 0;
 	vec2 z = vec2(0.0,0.0);
@@ -55,6 +55,6 @@ void main()
 					//	mod((mandle*10-(max_itr/2)), max_itr)
 					);
 	vColor = vec4(mcolor/max_itr, 1);
-	if(vPosition.x==0 || vPosition.y==0 )
+	if(DEBUG!=0 && (vPosition.x==0 || vPosition.y==0 ))
 		vColor = vec4(1,1,1, 1);
 }
