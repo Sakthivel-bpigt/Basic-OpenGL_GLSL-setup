@@ -122,9 +122,15 @@ void updateComplexPlane(float x, float y, int dir=1)
 	std::cout << "C_point " << C_point << std::endl;
 	float C_Plane_Offset;
 	if(dir > 0)
-		C_Plane_Offset = offset * nLength * 0.25;
+	{ 
+		// Zoom in by 7/8 of fraction
+		C_Plane_Offset = offset * nLength * 0.5 * 0.875;
+	}
 	else
-		C_Plane_Offset = offset * nLength;
+	{
+		// Zoom out by 8/7 of fraction
+		C_Plane_Offset = offset * nLength * 0.5 * 1.142857;
+	}
 	std::cout << "C_Plane_Offset : " << C_Plane_Offset << std::endl;
 	std::cout << "C_Plane (" << C_Plane[0] << ", " << C_Plane[1] << ") ";
 	std::cout << " (" << C_Plane[2] << ", " << C_Plane[3] << ")\n " << std::endl;
