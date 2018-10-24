@@ -107,17 +107,19 @@ void updateComplexPlane(float x, float y )
 {
 	float C_length = abs(C_Plane[2] - C_Plane[0]);
 	float offset = C_length / nLength;
-	std::cout << "C_length: " << C_length << ", offset: " << offset << std::endl;
-	vec2 C_point = vec2(C_Plane[0] + (nLength-x) * offset, C_Plane[1] + y * offset);
-	std::cout << "X, Y " << C_point << std::endl;
+	std::cout << "C_length: " << C_length << ", offset: " << offset<<"\t";
+	vec2 C_point = vec2(C_Plane[0] + x * offset, C_Plane[1] + (nLength-y) * offset);
+	std::cout << "C_point " << C_point << std::endl;
 	float C_Plane_Offset = offset * nLength * 0.25;
 	std::cout << "C_Plane_Offset : " << C_Plane_Offset << std::endl;
+	std::cout << "C_Plane (" << C_Plane[0] << ", " << C_Plane[1] << ") ";
+	std::cout << " (" << C_Plane[2] << ", " << C_Plane[3] << ")\n " << std::endl;
 	C_Plane[0] = C_point.x - C_Plane_Offset;
 	C_Plane[1] = C_point.y - C_Plane_Offset;
 	C_Plane[2] = C_point.x + C_Plane_Offset;
 	C_Plane[3] = C_point.y + C_Plane_Offset;
-	std::cout << "C_Plane_LB (" << C_Plane[0] << ", " << C_Plane[1] << ") ";
-	std::cout << " C_Plane_TR (" << C_Plane[2] <<", "<< C_Plane[3] << ")\n " << std::endl;
+	std::cout << "New C_Plane (" << C_Plane[0] << ", " << C_Plane[1] << ") ";
+	std::cout << " (" << C_Plane[2] << ", " << C_Plane[3] << ")\n " << std::endl;
 }
 
 //----------------------------------------------------------------------------
@@ -125,6 +127,14 @@ void updateComplexPlane(float x, float y )
 void
 mouse(int button, int state, int x, int y)
 {
+	//*********************************************************************************************
+	// Screen Offset problem
+	// opengl display coordinate and windows coordinate has some issues, which has to be fixed
+	//Temp solution: offset the windows X with +5 pixels and Y with -5 pixels
+	x += 5;
+	y -= 5;
+	//*********************************************************************************************
+
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
 		//update the complex plane
 		//std::cout << "X: " << x<< " Y: " << y<< std::endl;
@@ -156,6 +166,14 @@ mouse(int button, int state, int x, int y)
 
 void mouseMotion(int x, int y)
 {
+	//*********************************************************************************************
+	// Screen Offset problem
+	// opengl display coordinate and windows coordinate has some issues, which has to be fixed
+	//Temp solution: offset the windows X with +5 pixels and Y with -5 pixels
+	x += 5;
+	y -= 5;
+	//*********************************************************************************************
+
 	if (leftMouseButtonDown)
 	{
 		float C_length = abs(C_Plane[2] - C_Plane[0]);
@@ -172,6 +190,14 @@ void mouseMotion(int x, int y)
 
 void passiveMouseMotion(int x, int y)
 {
+	//*********************************************************************************************
+	// Screen Offset problem
+	// opengl display coordinate and windows coordinate has some issues, which has to be fixed
+	//Temp solution: offset the windows X with +5 pixels and Y with -5 pixels
+	x += 5;
+	y -= 5;
+	//*********************************************************************************************
+
 	//std::cout << "X: " << x << "Y: " << y << std::endl;
 	//float C_length = abs(C_Plane[2] - C_Plane[0]);
 	//float offset = C_length / nLength;
