@@ -55,4 +55,6 @@ void main()
 					//	mod((mandle*10-(max_itr/2)), max_itr)
 					);
 	vColor = vec4(mcolor/max_itr, 1);
+	if(vPosition.x==0 || vPosition.y==0 )
+		vColor = vec4(1,1,1, 1);
 }
