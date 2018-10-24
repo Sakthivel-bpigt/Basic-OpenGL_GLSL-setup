@@ -113,14 +113,18 @@ keyboard( unsigned char key, int x, int y )
 
 //----------------------------------------------------------------------------
 
-void updateComplexPlane(float x, float y )
+void updateComplexPlane(float x, float y, int dir=1)
 {
 	float C_length = abs(C_Plane[2] - C_Plane[0]);
 	float offset = C_length / nLength;
 	std::cout << "C_length: " << C_length << ", offset: " << offset<<"\t";
 	vec2 C_point = vec2(C_Plane[0] + x * offset, C_Plane[1] + (nLength-y) * offset);
 	std::cout << "C_point " << C_point << std::endl;
-	float C_Plane_Offset = offset * nLength * 0.25;
+	float C_Plane_Offset;
+	if(dir > 0)
+		C_Plane_Offset = offset * nLength * 0.25;
+	else
+		C_Plane_Offset = offset * nLength;
 	std::cout << "C_Plane_Offset : " << C_Plane_Offset << std::endl;
 	std::cout << "C_Plane (" << C_Plane[0] << ", " << C_Plane[1] << ") ";
 	std::cout << " (" << C_Plane[2] << ", " << C_Plane[3] << ")\n " << std::endl;
@@ -130,6 +134,7 @@ void updateComplexPlane(float x, float y )
 	C_Plane[3] = C_point.y + C_Plane_Offset;
 	std::cout << "New C_Plane (" << C_Plane[0] << ", " << C_Plane[1] << ") ";
 	std::cout << " (" << C_Plane[2] << ", " << C_Plane[3] << ")\n " << std::endl;
+	glutPostRedisplay();
 }
 
 //----------------------------------------------------------------------------
@@ -219,9 +224,26 @@ void passiveMouseMotion(int x, int y)
 }
 
 //----------------------------------------------------------------------
-void idle()
+void mouseWheel(int button, int dir, int x, int y)
 {
-	glutPostRedisplay();
+	//*********************************************************************************************
+	// Screen Offset problem
+	// opengl display coordinate and windows coordinate has some issues, which has to be fixed
+	//Temp solution: offset the windows X with +5 pixels and Y with -5 pixels
+	x += 5;
+	y -= 5;
+	//*********************************************************************************************
+
+	if (dir > 0)
+	{
+		// Zoom in
+		updateComplexPlane(x, y, dir);
+	}
+	else
+	{
+		// Zoom out
+		updateComplexPlane(x, y, dir);
+	}
 }
 //----------------------------------------------------------------------
 
@@ -243,6 +265,9 @@ main( int argc, char **argv )
 	glutMouseFunc(mouse);
 	glutMotionFunc(mouseMotion);
 	glutPassiveMotionFunc(passiveMouseMotion);
+	
+	// freeGLUT specific function
+	glutMouseWheelFunc(mouseWheel);
 
     glutMainLoop();
     return 0;
