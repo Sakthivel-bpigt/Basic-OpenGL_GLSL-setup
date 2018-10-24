@@ -102,7 +102,8 @@ keyboard( unsigned char key, int x, int y )
 	case 'r':
 		C_Plane = C_Plane_P;
 		break;
-	case 'q':
+	case '+':
+	case '=':
 		max_itr++;
 		std::cout << "max_itr: " << max_itr << std::endl;
 		break;
