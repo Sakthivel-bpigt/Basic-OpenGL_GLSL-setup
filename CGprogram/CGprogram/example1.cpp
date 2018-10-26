@@ -260,7 +260,7 @@ main( int argc, char **argv )
     glutInitDisplayMode( GLUT_RGBA );
     glutInitWindowSize( 1000, 1000 );
 	    
-    glutCreateWindow( "Sierpinski Gasket" );
+    glutCreateWindow( "Mandelbrot Viewer" );
 
 	glewInit();
     
