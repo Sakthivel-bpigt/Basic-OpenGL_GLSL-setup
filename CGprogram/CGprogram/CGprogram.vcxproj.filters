@@ -29,6 +29,42 @@
     <None Include="vshader21.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="fshader51.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fshader52.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fshader53.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fshader56.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vshader51.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vshader52.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vshader53.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vshader56.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fshader41.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fshader42.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vshader41.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vshader42.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h">
