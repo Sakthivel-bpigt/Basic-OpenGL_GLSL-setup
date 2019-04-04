@@ -9,3 +9,5 @@
 *.tlog
 *.idb
 *.lastbuildstate
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
