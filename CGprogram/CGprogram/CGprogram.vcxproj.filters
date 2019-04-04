@@ -46,5 +46,8 @@
     <ClInclude Include="vec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

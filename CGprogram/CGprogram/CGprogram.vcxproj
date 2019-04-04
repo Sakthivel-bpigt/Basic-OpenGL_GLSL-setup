@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Angel.h" />
     <ClInclude Include="CheckError.h" />
+    <ClInclude Include="data.h" />
     <ClInclude Include="mat.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="vec.h" />
