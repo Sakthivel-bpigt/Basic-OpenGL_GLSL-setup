@@ -64,8 +64,8 @@ const GLfloat  dr = 5.0 * DegreesToRadians;
 
 // Projection transformation parameters
 
-GLfloat  left = -1.0, right = 1.0;
-GLfloat  bottom = -1.0, top = 1.0;
+GLfloat  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)
+GLfloat  aspect;       // Viewport aspect ratio
 GLfloat  zNear = 0.5, zFar = 3.0;
 
 //----------------------------------------------------------------------------
@@ -84,7 +84,7 @@ void display(void)
 	mat4  mv = LookAt(eye, at, up);
 	glUniformMatrix4fv(model_view, 1, GL_TRUE, mv);
 
-	mat4  p = Frustum( left, right, bottom, top, zNear, zFar );
+	mat4  p = Perspective(fovy, aspect, zNear, zFar);
 	glUniformMatrix4fv(projection, 1, GL_TRUE, p);
 
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
@@ -129,6 +129,7 @@ void keyboard(unsigned char key, int x, int y)
 void reshape(int width, int height)
 {
 	glViewport(0, 0, width, height);
+	aspect = GLfloat(width) / height;
 }
 
 //----------------------------------------------------------------------------
