@@ -84,7 +84,7 @@ void display(void)
 	mat4  mv = LookAt(eye, at, up);
 	glUniformMatrix4fv(model_view, 1, GL_TRUE, mv);
 
-	mat4  p = Ortho(left, right, bottom, top, zNear, zFar);
+	mat4  p = Frustum( left, right, bottom, top, zNear, zFar );
 	glUniformMatrix4fv(projection, 1, GL_TRUE, p);
 
 	glDrawArrays(GL_TRIANGLES, 0, NumVertices);
